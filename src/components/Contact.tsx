@@ -27,7 +27,7 @@ export default function Contact({ theme }: ContactProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          access_key: 'YOUR_ACCESS_KEY_HERE', // ⚠️ REMPLACEZ PAR VOTRE CLÉ WEB3FORMS
+          access_key: 'd41b2005-bd72-4317-aa91-43c11606f6f2',
           name: formData.name,
           email: formData.email,
           message: formData.message,
