@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Send, User, Mail, MessageSquare, Wifi, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Send, User, Mail, MessageSquare, Wifi, CheckCircle, XCircle } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
 interface ContactProps {
