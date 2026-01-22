@@ -13,6 +13,7 @@
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hot-toast": "^2.6.0",
     "three": "^0.182.0"
   },
   "devDependencies": {
