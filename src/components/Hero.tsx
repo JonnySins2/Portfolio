@@ -64,14 +64,13 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
           minWidth: '430px',
         }}
       />
-
       <div
         className="absolute inset-0"
         style={{
           background:
             theme === 'dark'
-              ? 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.3) 70%, transparent 100%)'
-              : 'linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.3) 70%, transparent 100%)',
+              ? 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 70%, transparent 100%)'
+              : 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0) 70%, transparent 100%)',
         }}
       />
 

@@ -8,23 +8,37 @@ interface ProjectsProps {
 
 const projectsData = [
   {
-    title: "Application E-commerce",
-    description: "Plateforme complète avec panier, paiement et gestion des commandes",
-    tech: ["React", "Node.js", "MongoDB"],
-    image: "https://images.unsplash.com/photo-1557821552-17105176677c?w=800&h=500&fit=crop"
+    title: "Plateforme du ministère",
+    description: "Plateforme pour gérer les demandes de congés et permissions de tout les personnels du Ministere de la jeunesse et des sports",
+    tech: ["ReactJS", "Laravel", "MySQL"],
+    image: "captureRH.png"
   },
   {
-    title: "Dashboard Analytics",
-    description: "Interface interactive pour visualiser des données en temps réel",
-    tech: ["Vue.js", "D3.js", "Firebase"],
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=500&fit=crop"
+    title: "Site FPTSD",
+    description: "Conception d’un site vitrine pour l’Université FPTSD Madagascar, accompagné d’un back-office dédié à la gestion des contenus.",
+    tech: ["Figma","ReactJS", "NestJS", "PostgreSQL"],
+    image: "captureFPTSD.png"
   },
   {
-    title: "Application Mobile",
-    description: "App native cross-platform pour la gestion de tâches",
-    tech: ["React Native", "Redux", "API REST"],
+    title: "iKandra",
+    description: "Une plateforme pour pour freelancers et clients à Madagascar",
+    tech: ["ReactJS", "Spring boot", "PostgreSQL"],
+    image: "captureIkandra.png"
+  },
+  {
+    title: "Site d'inscription universitaire",
+    description: "Un site web pour faire l'inscription en ligne pour les étudiants pour la Faculté de Sciences Fianarantsoa",
+    tech: ["ReactJS", "ASP.NET Core", "Mongo DB"],
+    image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&h=500&fit=crop"
+  },
+  {
+    title: "Mi-ZARA",
+    description: "une application mobile pour repartir les factures JIRAMA de mon batiment  ",
+    tech: ["Kotlin"],
     image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=500&fit=crop"
   }
+  
+
 ];
 
 export default function Projects({ theme, scrollY }: ProjectsProps) {
@@ -81,13 +95,12 @@ export default function Projects({ theme, scrollY }: ProjectsProps) {
         }}
       />
 
-      {/* Overlay gradient pour visibilité du contenu */}
       <div 
         className="absolute inset-0"
         style={{
           background: theme === 'dark'
-            ? 'rgba(0, 0, 0, 0.65)'
-            : 'rgba(255, 255, 255, 0.6)',
+            ? 'rgba(0, 0, 0, 0.5)'
+            : 'rgba(255, 255, 255, 0.5)',
         }}
       />
 

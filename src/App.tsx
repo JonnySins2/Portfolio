@@ -62,10 +62,9 @@ function App() {
       />
       <Hero scrollY={scrollY} onNavigate={scrollToSection} theme={theme} />
       
-      {/* IMPORTANT: Passer scrollY en props */}
       <Projects theme={theme} scrollY={scrollY} />
       
-      <Skills theme={theme} />
+      <Skills theme={theme} scrollY={scrollY} />
       <About theme={theme} />
       <Contact theme={theme} />
       <Footer theme={theme} />
