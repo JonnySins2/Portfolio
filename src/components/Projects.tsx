@@ -33,9 +33,9 @@ const projectsData = [
   },
   {
     title: "Mi-ZARA",
-    description: "une application mobile pour repartir les factures JIRAMA de mon batiment  ",
-    tech: ["Kotlin"],
-    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=500&fit=crop"
+    description: "une application mobile pour repartir les factures JIRAMA de mon appartement entre mes colocataires",
+    tech: ["Kotlin", "Gradle", "XML"],
+    image: "imgCardMiZARA.png"
   }
   
 
