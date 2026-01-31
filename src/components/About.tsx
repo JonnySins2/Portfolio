@@ -5,11 +5,10 @@ interface AboutProps {
 }
 
 export default function About({ theme }: AboutProps) {
-  const handleDownloadCV = () => {
-    // Méthode 1: Télécharger depuis le dossier public
+  const handleDownloadCV = (language: 'FR' | 'EN') => {
     const link = document.createElement('a');
-    link.href = '/CV_Julianot_RALAHIJAONINA.pdf'; // Votre CV dans /public
-    link.download = 'CV_Julianot_RALAHIJAONINA.pdf'; // Nom du fichier téléchargé
+    link.href = `/CV_Julianot_RALAHIJAONINA_${language}.pdf`;
+    link.download = `CV_Julianot_RALAHIJAONINA_${language}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -37,14 +36,43 @@ export default function About({ theme }: AboutProps) {
           <strong> opportunités professionnelles, collaborations ou projets freelance</strong>.
         </p>
 
-        {/* Bouton avec téléchargement */}
-        <button 
-          onClick={handleDownloadCV}
-          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all hover:scale-105 inline-flex items-center gap-2"
-        >
-          <Download className="w-5 h-5" />
-          Télécharger mon CV
-        </button>
+        {/* Boutons de téléchargement */}
+        <div className="flex flex-wrap gap-4 justify-center">
+          {/* CV Français */}
+          <button 
+            onClick={() => handleDownloadCV('FR')}
+            className={`group px-8 py-4 rounded-full font-semibold transition-all hover:scale-105 inline-flex items-center gap-2 ${
+              theme === 'dark'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:shadow-lg hover:shadow-purple-500/50'
+                : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:shadow-lg hover:shadow-purple-500/50'
+            }`}
+          >
+            <Download className="w-5 h-5 group-hover:animate-bounce" />
+            <span>CV Français</span>
+            <span className="px-2 py-0.5 bg-white/20 rounded text-xs font-bold">FR</span>
+          </button>
+
+          {/* CV Anglais */}
+          <button 
+            onClick={() => handleDownloadCV('EN')}
+            className={`group px-8 py-4 rounded-full font-semibold transition-all hover:scale-105 inline-flex items-center gap-2 ${
+              theme === 'dark'
+                ? 'bg-white/10 hover:bg-white/20 border border-gray-700 hover:border-blue-500'
+                : 'bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-blue-500'
+            }`}
+          >
+            <Download className="w-5 h-5 group-hover:animate-bounce" />
+            <span>CV English</span>
+            <span className="px-2 py-0.5 bg-blue-500/20 text-blue-500 rounded text-xs font-bold">EN</span>
+          </button>
+        </div>
+
+        {/* Info supplémentaire */}
+        <p className={`mt-6 text-sm ${
+          theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
+        }`}>
+          Téléchargez mon CV dans la langue de votre choix
+        </p>
       </div>
     </section>
   );
