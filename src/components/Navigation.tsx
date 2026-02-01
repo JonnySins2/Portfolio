@@ -60,7 +60,7 @@ export default function Navigation({ activeSection, onNavigate, theme, onThemeTo
           : 'bg-transparent border-b border-transparent'
       } backdrop-blur-sm`}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+          <div className="text-2xl font-bold bg-purple-600 bg-clip-text text-transparent">
             Julianot
           </div>
           
@@ -73,7 +73,7 @@ export default function Navigation({ activeSection, onNavigate, theme, onThemeTo
                   onClick={() => onNavigate(section)}
                   className={`capitalize transition-colors duration-200 ${
                     activeSection === section 
-                      ? 'text-blue-500 font-semibold' 
+                      ? 'text-purple-500 font-semibold' 
                       : theme === 'dark' 
                         ? 'text-gray-300 hover:text-white' 
                         : 'text-gray-700 hover:text-gray-900'
@@ -88,7 +88,7 @@ export default function Navigation({ activeSection, onNavigate, theme, onThemeTo
             <button
               onClick={onThemeToggle}
               className={`relative w-14 h-7 rounded-full transition-all duration-300 ${
-                theme === 'dark' ? 'bg-gradient-to-r from-indigo-600 to-purple-600' : 'bg-gradient-to-r from-amber-400 to-orange-500'
+                theme === 'dark' ? 'bg-purple-600' : 'bg-amber-500'
               } shadow-lg`}
               aria-label="Toggle theme"
             >

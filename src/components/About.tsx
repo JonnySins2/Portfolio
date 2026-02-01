@@ -43,8 +43,8 @@ export default function About({ theme }: AboutProps) {
             onClick={() => handleDownloadCV('FR')}
             className={`group px-8 py-4 rounded-full font-semibold transition-all hover:scale-105 inline-flex items-center gap-2 ${
               theme === 'dark'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:shadow-lg hover:shadow-purple-500/50'
-                : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:shadow-lg hover:shadow-purple-500/50'
+                ? 'bg-purple-600 text-white hover:shadow-lg hover:shadow-purple-500/50'
+                : 'bg-purple-600 text-white hover:shadow-lg hover:shadow-purple-500/50'
             }`}
           >
             <Download className="w-5 h-5 group-hover:animate-bounce" />

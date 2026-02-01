@@ -92,7 +92,7 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
               Développeur
-              <span className="block bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 bg-clip-text text-transparent mt-2">
+              <span className="block bg-purple-600 to-pink-600 bg-clip-text text-transparent mt-2">
                 Full Stack
               </span>
             </h1>
@@ -110,7 +110,7 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
           <div className="flex flex-wrap gap-4">
             <button
               onClick={() => onNavigate('contact')}
-              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all hover:scale-105"
+              className="px-8 py-4 bg-purple-600 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all hover:scale-105"
             >
               Me contacter
             </button>

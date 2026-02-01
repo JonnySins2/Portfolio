@@ -317,7 +317,7 @@ export default function Contact({ theme }: ContactProps) {
             <button 
               onClick={handleSubmit}
               disabled={status === 'loading'}
-              className={`w-full px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all hover:scale-105 flex items-center justify-center gap-2 ${
+              className={`w-full px-8 py-4 bg-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all hover:scale-105 flex items-center justify-center gap-2 ${
                 status === 'loading' ? 'opacity-50 cursor-not-allowed hover:scale-100' : ''
               }`}
             >
