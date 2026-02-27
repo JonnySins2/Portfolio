@@ -3,17 +3,61 @@ import { useRef, useEffect, useState, type JSX } from 'react';
 
 interface AboutProps {
   theme: 'dark' | 'light';
+  lang: 'FR' | 'EN';
 }
 
-const paragraphs = [
-  `Je m'appelle Julianot RALAHIJAONINA, développeur fullstack passionné avec plus de 3 ans d'expérience dans la conception et le développement d'applications web modernes. Titulaire d'une Licence en Informatique, je poursuis actuellement un Master à l'École Nationale de l'Informatique (E.N.I) Madagascar.`,
-  `Je travaille principalement avec des technologies comme React, Next.js, Node.js (NestJS), PHP (Laravel), Java (Spring Boot) et .NET pour le web, ainsi que Kotlin et React Native pour les applications mobiles, en mettant un point d'honneur sur la performance, la maintenabilité du code et l'expérience utilisateur.`,
-  `Curieux, rigoureux et orienté solution, j'aime transformer des idées en produits concrets et fiables. Je suis actuellement ouvert à des opportunités professionnelles, collaborations ou projets freelance.`
-];
+const content = {
+  FR: {
+    titleLeft: 'À ',
+    titleRight: 'Propos',
+    paragraphs: [
+      `Je m'appelle Julianot RALAHIJAONINA, développeur fullstack passionné avec plus de 3 ans d'expérience dans la conception et le développement d'applications web modernes. Titulaire d'une Licence en Informatique, je poursuis actuellement un Master à l'École Nationale de l'Informatique (E.N.I) Madagascar.`,
+      `Je travaille principalement avec des technologies comme React, Next.js, Node.js (NestJS), PHP (Laravel), Java (Spring Boot) et .NET pour le web, ainsi que Kotlin et React Native pour les applications mobiles, en mettant un point d'honneur sur la performance, la maintenabilité du code et l'expérience utilisateur.`,
+      `Curieux, rigoureux et orienté solution, j'aime transformer des idées en produits concrets et fiables. Je suis actuellement ouvert à des opportunités professionnelles, collaborations ou projets freelance.`
+    ],
+    boldKeywords: [
+      'Julianot RALAHIJAONINA',
+      "3 ans d'expérience",
+      'Licence en Informatique',
+      "Master à l'École Nationale de l'Informatique (E.N.I) Madagascar",
+      'React, Next.js, Node.js (NestJS), PHP (Laravel), Java (Spring Boot) et .NET',
+      'Kotlin et React Native',
+      'opportunités professionnelles, collaborations ou projets freelance',
+    ],
+    cvFR: 'CV Français',
+    cvEN: 'CV English',
+    hint: 'Téléchargez mon CV dans la langue de votre choix',
+  },
+  EN: {
+    titleLeft: 'Ab',
+    titleRight: 'out',
+    paragraphs: [
+      `My name is Julianot RALAHIJAONINA, a passionate fullstack developer with over 3 years of experience designing and building modern web applications. I hold a Bachelor's degree in Computer Science and am currently pursuing a Master's degree at the École Nationale de l'Informatique (E.N.I) Madagascar.`,
+      `I primarily work with technologies such as React, Next.js, Node.js (NestJS), PHP (Laravel), Java (Spring Boot) and .NET for the web, as well as Kotlin and React Native for mobile applications, with a strong focus on performance, code maintainability and user experience.`,
+      `Curious, detail-oriented and solution-driven, I love turning ideas into concrete, reliable products. I am currently open to professional opportunities, collaborations or freelance projects.`
+    ],
+    boldKeywords: [
+      'Julianot RALAHIJAONINA',
+      'over 3 years of experience',
+      "Bachelor's degree in Computer Science",
+      "Master's degree at the École Nationale de l'Informatique (E.N.I) Madagascar",
+      'React, Next.js, Node.js (NestJS), PHP (Laravel), Java (Spring Boot) and .NET',
+      'Kotlin and React Native',
+      'professional opportunities, collaborations or freelance projects',
+    ],
+    cvFR: 'CV Français',
+    cvEN: 'CV English',
+    hint: 'Download my resume in the language of your choice',
+  },
+};
 
-export default function About({ theme }: AboutProps) {
+export default function About({ theme, lang }: AboutProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  const t = content[lang];
+  const leftPart = t.titleLeft.split('');
+  const rightPart = t.titleRight.split('');
 
   const handleDownloadCV = (language: 'FR' | 'EN') => {
     const link = document.createElement('a');
@@ -41,23 +85,9 @@ export default function About({ theme }: AboutProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isVisible]);
 
-  const title = "À Propos";
-  const leftPart = title.slice(0, 2).split('');
-  const rightPart = title.slice(2).split('');
-
   const renderParagraph = (text: string) => {
-    const boldKeywords = [
-      'Julianot RALAHIJAONINA',
-      "3 ans d'expérience",
-      'Licence en Informatique',
-      "Master à l'École Nationale de l'Informatique (E.N.I) Madagascar",
-      'React, Next.js, Node.js (NestJS), PHP (Laravel), Java (Spring Boot) et .NET',
-      'Kotlin et React Native',
-      'opportunités professionnelles, collaborations ou projets freelance',
-    ];
-
     let parts: (string | JSX.Element)[] = [text];
-    boldKeywords.forEach((kw, kwIndex) => {
+    t.boldKeywords.forEach((kw, kwIndex) => {
       parts = parts.flatMap((part) => {
         if (typeof part !== 'string') return [part];
         const idx = part.indexOf(kw);
@@ -128,7 +158,7 @@ export default function About({ theme }: AboutProps) {
         <div className={`text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed mb-6 sm:mb-8 text-left space-y-4 sm:space-y-5 md:space-y-6 ${
           theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
         }`}>
-          {paragraphs.map((para, index) => {
+          {t.paragraphs.map((para, index) => {
             const animations = [
               'paragraphSlideFromLeft',
               'paragraphSlideFromRight',
@@ -167,7 +197,7 @@ export default function About({ theme }: AboutProps) {
             }`}
           >
             <Download className="w-4 h-4 sm:w-5 sm:h-5 group-hover:animate-bounce" />
-            <span>CV Français</span>
+            <span>{t.cvFR}</span>
             <span className="px-2 py-0.5 bg-white/20 rounded text-xs font-bold">FR</span>
           </button>
 
@@ -180,7 +210,7 @@ export default function About({ theme }: AboutProps) {
             }`}
           >
             <Download className="w-4 h-4 sm:w-5 sm:h-5 group-hover:animate-bounce" />
-            <span>CV English</span>
+            <span>{t.cvEN}</span>
             <span className="px-2 py-0.5 bg-amber-500/20 text-amber-500 rounded text-xs font-bold">EN</span>
           </button>
         </div>
@@ -194,7 +224,7 @@ export default function About({ theme }: AboutProps) {
             opacity: 0,
           }}
         >
-          Téléchargez mon CV dans la langue de votre choix
+          {t.hint}
         </p>
       </div>
 

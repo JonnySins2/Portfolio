@@ -4,13 +4,79 @@ import toast, { Toaster } from 'react-hot-toast';
 
 interface ContactProps {
   theme: 'dark' | 'light';
+  lang: 'FR' | 'EN';
 }
 
-export default function Contact({ theme }: ContactProps) {
+const content = {
+  FR: {
+    titleLeft: 'Con',
+    titleRight: 'tact',
+    subtitle: "Une question ? Un projet ? N'hésitez pas à me contacter !",
+    namLabel: 'Nom complet',
+    namePlaceholder: 'Votre nom',
+    nameCounter: (n: number) => `${n}/100 caractères`,
+    emailLabel: 'Adresse email',
+    emailPlaceholder: 'votre@email.com',
+    messageLabel: 'Message',
+    messagePlaceholder: 'Décrivez votre projet ou votre question...',
+    messageCounter: (n: number) => `${n}/5000 caractères (minimum 10)`,
+    sendBtn: 'Envoyer le message',
+    sending: 'Envoi en cours...',
+    subject: (name: string) => `Nouveau message de ${name} depuis votre portfolio`,
+    errors: {
+      nameRequired: 'Le nom est requis',
+      nameTooShort: 'Le nom doit contenir au moins 2 caractères',
+      nameTooLong: 'Le nom est trop long (maximum 100 caractères)',
+      emailRequired: "L'adresse email est requise",
+      emailInvalid: "L'adresse email n'est pas valide",
+      emailDomain: "Le domaine de l'email semble invalide",
+      messageRequired: 'Le message est requis',
+      messageTooShort: 'Le message doit contenir au moins 10 caractères',
+      messageTooLong: 'Le message est trop long (maximum 5000 caractères)',
+      sendFail: "Échec de l'envoi du message.\nVeuillez réessayer ultérieurement.",
+      networkError: 'Erreur de connexion au serveur.\nVérifiez votre connexion internet et réessayez.',
+    },
+    success: 'Message envoyé avec succès ! 🎉\nJe vous répondrai dans les plus brefs délais.',
+  },
+  EN: {
+    titleLeft: 'Con',
+    titleRight: 'tact',
+    subtitle: 'A question? A project? Feel free to reach out!',
+    namLabel: 'Full name',
+    namePlaceholder: 'Your name',
+    nameCounter: (n: number) => `${n}/100 characters`,
+    emailLabel: 'Email address',
+    emailPlaceholder: 'your@email.com',
+    messageLabel: 'Message',
+    messagePlaceholder: 'Describe your project or question...',
+    messageCounter: (n: number) => `${n}/5000 characters (minimum 10)`,
+    sendBtn: 'Send message',
+    sending: 'Sending...',
+    subject: (name: string) => `New message from ${name} via portfolio`,
+    errors: {
+      nameRequired: 'Name is required',
+      nameTooShort: 'Name must be at least 2 characters',
+      nameTooLong: 'Name is too long (maximum 100 characters)',
+      emailRequired: 'Email address is required',
+      emailInvalid: 'Email address is not valid',
+      emailDomain: 'The email domain seems invalid',
+      messageRequired: 'Message is required',
+      messageTooShort: 'Message must be at least 10 characters',
+      messageTooLong: 'Message is too long (maximum 5000 characters)',
+      sendFail: 'Failed to send message.\nPlease try again later.',
+      networkError: 'Server connection error.\nCheck your internet connection and try again.',
+    },
+    success: 'Message sent successfully! 🎉\nI will get back to you as soon as possible.',
+  },
+};
+
+export default function Contact({ theme, lang }: ContactProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'loading'>('idle');
+
+  const t = content[lang];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,45 +115,45 @@ export default function Contact({ theme }: ContactProps) {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      toast.error('Le nom est requis', { duration: 4000, icon: <User className="w-5 h-5" /> });
+      toast.error(t.errors.nameRequired, { duration: 4000, icon: <User className="w-5 h-5" /> });
       return;
     }
     if (formData.name.trim().length < 2) {
-      toast.error('Le nom doit contenir au moins 2 caractères', { duration: 4000, icon: <User className="w-5 h-5" /> });
+      toast.error(t.errors.nameTooShort, { duration: 4000, icon: <User className="w-5 h-5" /> });
       return;
     }
     if (formData.name.trim().length > 100) {
-      toast.error('Le nom est trop long (maximum 100 caractères)', { duration: 4000, icon: <User className="w-5 h-5" /> });
+      toast.error(t.errors.nameTooLong, { duration: 4000, icon: <User className="w-5 h-5" /> });
       return;
     }
     if (!formData.email.trim()) {
-      toast.error("L'adresse email est requise", { duration: 4000, icon: <Mail className="w-5 h-5" /> });
+      toast.error(t.errors.emailRequired, { duration: 4000, icon: <Mail className="w-5 h-5" /> });
       return;
     }
     if (!isValidEmail(formData.email)) {
-      toast.error("L'adresse email n'est pas valide", { duration: 4000, icon: <Mail className="w-5 h-5" /> });
+      toast.error(t.errors.emailInvalid, { duration: 4000, icon: <Mail className="w-5 h-5" /> });
       return;
     }
     const emailExists = await checkEmailExists(formData.email);
     if (!emailExists) {
-      toast.error("Le domaine de l'email semble invalide", { duration: 4000, icon: <Mail className="w-5 h-5" /> });
+      toast.error(t.errors.emailDomain, { duration: 4000, icon: <Mail className="w-5 h-5" /> });
       return;
     }
     if (!formData.message.trim()) {
-      toast.error('Le message est requis', { duration: 4000, icon: <MessageSquare className="w-5 h-5" /> });
+      toast.error(t.errors.messageRequired, { duration: 4000, icon: <MessageSquare className="w-5 h-5" /> });
       return;
     }
     if (formData.message.trim().length < 10) {
-      toast.error('Le message doit contenir au moins 10 caractères', { duration: 4000, icon: <MessageSquare className="w-5 h-5" /> });
+      toast.error(t.errors.messageTooShort, { duration: 4000, icon: <MessageSquare className="w-5 h-5" /> });
       return;
     }
     if (formData.message.trim().length > 5000) {
-      toast.error('Le message est trop long (maximum 5000 caractères)', { duration: 4000, icon: <MessageSquare className="w-5 h-5" /> });
+      toast.error(t.errors.messageTooLong, { duration: 4000, icon: <MessageSquare className="w-5 h-5" /> });
       return;
     }
 
     setStatus('loading');
-    const loadingToast = toast.loading('Envoi en cours...');
+    const loadingToast = toast.loading(t.sending);
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
@@ -98,7 +164,7 @@ export default function Contact({ theme }: ContactProps) {
           name: formData.name.trim(),
           email: formData.email.trim(),
           message: formData.message.trim(),
-          subject: `Nouveau message de ${formData.name.trim()} depuis votre portfolio`,
+          subject: t.subject(formData.name.trim()),
           from_name: 'Portfolio Contact Form',
         }),
       });
@@ -107,13 +173,13 @@ export default function Contact({ theme }: ContactProps) {
       toast.dismiss(loadingToast);
 
       if (result.success) {
-        toast.success('Message envoyé avec succès ! 🎉\nJe vous répondrai dans les plus brefs délais.', {
+        toast.success(t.success, {
           duration: 5000,
           icon: <CheckCircle className="w-5 h-5" />,
         });
         setFormData({ name: '', email: '', message: '' });
       } else {
-        toast.error("Échec de l'envoi du message.\nVeuillez réessayer ultérieurement.", {
+        toast.error(t.errors.sendFail, {
           duration: 5000,
           icon: <XCircle className="w-5 h-5" />,
         });
@@ -121,7 +187,7 @@ export default function Contact({ theme }: ContactProps) {
     } catch (error) {
       console.error("Erreur lors de l'envoi:", error);
       toast.dismiss(loadingToast);
-      toast.error('Erreur de connexion au serveur.\nVérifiez votre connexion internet et réessayez.', {
+      toast.error(t.errors.networkError, {
         duration: 5000,
         icon: <Wifi className="w-5 h-5" />,
       });
@@ -130,9 +196,8 @@ export default function Contact({ theme }: ContactProps) {
     }
   };
 
-  const title = "Contact";
-  const leftPart = title.slice(0, 3).split('');
-  const rightPart = title.slice(3).split('');
+  const leftPart = t.titleLeft.split('');
+  const rightPart = t.titleRight.split('');
 
   const inputClass = (extra = '') =>
     `w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border transition-all duration-200 
@@ -253,7 +318,7 @@ export default function Contact({ theme }: ContactProps) {
               opacity: 0,
             }}
           >
-            Une question ? Un projet ? N'hésitez pas à me contacter !
+            {t.subtitle}
           </p>
 
           {/* Formulaire */}
@@ -267,11 +332,11 @@ export default function Contact({ theme }: ContactProps) {
             {/* Nom */}
             <div>
               <label className={labelClass}>
-                Nom complet <span className="text-red-500">*</span>
+                {t.namLabel} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="Votre nom"
+                placeholder={t.namePlaceholder}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 disabled={status === 'loading'}
@@ -280,17 +345,17 @@ export default function Contact({ theme }: ContactProps) {
                 maxLength={100}
                 className={inputClass()}
               />
-              <p className={counterClass}>{formData.name.length}/100 caractères</p>
+              <p className={counterClass}>{t.nameCounter(formData.name.length)}</p>
             </div>
 
             {/* Email */}
             <div>
               <label className={labelClass}>
-                Adresse email <span className="text-red-500">*</span>
+                {t.emailLabel} <span className="text-red-500">*</span>
               </label>
               <input
                 type="email"
-                placeholder="votre@email.com"
+                placeholder={t.emailPlaceholder}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 disabled={status === 'loading'}
@@ -302,11 +367,11 @@ export default function Contact({ theme }: ContactProps) {
             {/* Message */}
             <div>
               <label className={labelClass}>
-                Message <span className="text-red-500">*</span>
+                {t.messageLabel} <span className="text-red-500">*</span>
               </label>
               <textarea
                 rows={4}
-                placeholder="Décrivez votre projet ou votre question..."
+                placeholder={t.messagePlaceholder}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 disabled={status === 'loading'}
@@ -316,7 +381,7 @@ export default function Contact({ theme }: ContactProps) {
                 className={inputClass('resize-none')}
               />
               <p className={counterClass}>
-                {formData.message.length}/5000 caractères (minimum 10)
+                {t.messageCounter(formData.message.length)}
               </p>
             </div>
 
@@ -333,12 +398,12 @@ export default function Contact({ theme }: ContactProps) {
               {status === 'loading' ? (
                 <>
                   <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Envoi en cours...</span>
+                  <span>{t.sending}</span>
                 </>
               ) : (
                 <>
                   <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span>Envoyer le message</span>
+                  <span>{t.sendBtn}</span>
                 </>
               )}
             </button>

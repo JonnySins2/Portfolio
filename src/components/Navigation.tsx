@@ -1,19 +1,46 @@
-import { useState, useEffect } from 'react';
-import { Moon, Sun, Menu, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Moon, Sun, Menu, X, ChevronDown } from 'lucide-react';
 
 interface NavigationProps {
   activeSection: string;
   onNavigate: (section: string) => void;
   theme: 'dark' | 'light';
   onThemeToggle: () => void;
+  lang: 'FR' | 'EN';
+  onLangChange: (lang: 'FR' | 'EN') => void;
 }
 
-export default function Navigation({ activeSection, onNavigate, theme, onThemeToggle }: NavigationProps) {
+const translations = {
+  FR: {
+    accueil: 'accueil',
+    projets: 'projets',
+    competences: 'compétences',
+    apropos: 'à propos',
+    contact: 'contact',
+    role: 'Développeur Full Stack',
+    availability: 'Disponible pour de nouveaux projets',
+  },
+  EN: {
+    accueil: 'home',
+    projets: 'projects',
+    competences: 'skills',
+    apropos: 'about',
+    contact: 'contact',
+    role: 'Full Stack Developer',
+    availability: 'Available for new projects',
+  },
+};
+
+export default function Navigation({ activeSection, onNavigate, theme, onThemeToggle, lang, onLangChange }: NavigationProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [displayedText, setDisplayedText] = useState('');
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
   const fullText = 'Julianot.';
+
+  const t = translations[lang];
 
   // Effet typing
   useEffect(() => {
@@ -58,6 +85,17 @@ export default function Navigation({ activeSection, onNavigate, theme, onThemeTo
       return () => clearTimeout(timeout);
     }
   }, [isMobileMenuOpen]);
+
+  // Fermer le dropdown langue si clic en dehors
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setIsLangOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const sections = ['accueil', 'projets', 'competences', 'apropos', 'contact'];
 
@@ -108,7 +146,7 @@ export default function Navigation({ activeSection, onNavigate, theme, onThemeTo
                         : 'text-black hover:text-amber-700'
                   }`}
                 >
-                  {section}
+                  {t[section as keyof typeof t]}
                 </button>
               ))}
             </div>
@@ -130,6 +168,52 @@ export default function Navigation({ activeSection, onNavigate, theme, onThemeTo
                 )}
               </div>
             </button>
+
+            {/* Language Dropdown */}
+            <div ref={langRef} className="relative">
+              <button
+                onClick={() => setIsLangOpen(prev => !prev)}
+                style={{ fontFamily: 'Space Grotesk' }}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                  theme === 'dark'
+                    ? 'text-white hover:bg-white/10'
+                    : 'text-black hover:bg-black/5'
+                }`}
+              >
+                {lang}
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isLangOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isLangOpen && (
+                <div
+                  className={`absolute right-0 mt-2 w-24 rounded-xl overflow-hidden shadow-xl border ${
+                    theme === 'dark'
+                      ? 'bg-gray-900 border-white/10'
+                      : 'bg-white border-black/10'
+                  }`}
+                  style={{ animation: 'fadeIn 0.15s ease-out' }}
+                >
+                  {(['FR', 'EN'] as const).map(l => (
+                    <button
+                      key={l}
+                      onClick={() => { onLangChange(l); setIsLangOpen(false); }}
+                      style={{ fontFamily: 'Space Grotesk' }}
+                      className={`w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors duration-150 ${
+                        lang === l
+                          ? theme === 'dark'
+                            ? 'text-amber-400 bg-amber-500/10'
+                            : 'text-amber-600 bg-amber-50'
+                          : theme === 'dark'
+                            ? 'text-gray-300 hover:bg-white/5 hover:text-white'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-black'
+                      }`}
+                    >
+                      {l === 'FR' ? 'FR' : 'EN'}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Bouton Hamburger */}
             <button
@@ -186,7 +270,7 @@ export default function Navigation({ activeSection, onNavigate, theme, onThemeTo
                     animation: isMobileMenuOpen ? `slideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.04}s both` : 'none',
                   }}
                 >
-                  {section}
+                  {t[section as keyof typeof t]}
                 </button>
               ))}
             </nav>
@@ -202,10 +286,10 @@ export default function Navigation({ activeSection, onNavigate, theme, onThemeTo
               }}
             >
               <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Développeur Full Stack
+                {t.role}
               </p>
               <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
-                Disponible pour de nouveaux projets
+                {t.availability}
               </p>
             </div>
           </div>

@@ -5,53 +5,109 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 interface ProjectsProps {
   theme: 'dark' | 'light';
   scrollY: number;
+  lang: 'FR' | 'EN';
 }
 
-const projectsData = [
-  {
-    title: "Plateforme du ministère",
-    description: "Plateforme pour gérer les demandes de congés et permissions de tout les personnels du Ministere de la jeunesse et des sports",
-    tech: ["ReactJS", "Laravel", "MySQL"],
-    image: "captureRH.png"
-  },
-  {
-    title: "Site FPTSD",
-    description: "Conception d'un site vitrine pour l'Université FPTSD Madagascar, accompagné d'un back-office dédié à la gestion des contenus.",
-    tech: ["Figma","ReactJS", "NestJS", "PostgreSQL"],
-    image: "captureFPTSD.png"
-  },
-  {
-    title: "iKandra",
-    description: "Une plateforme pour pour freelancers et clients à Madagascar",
-    tech: ["ReactJS", "Spring boot", "PostgreSQL"],
-    image: "captureIkandra.png"
-  },
-  {
-    title: "Site d'inscription universitaire",
-    description: "Un site web pour faire l'inscription en ligne pour les étudiants pour la Faculté de Sciences Fianarantsoa",
-    tech: ["ReactJS", "ASP.NET Core", "Mongo DB"],
-    image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&h=500&fit=crop"
-  },
-  {
-    title: "Mi-ZARA",
-    description: "une application mobile pour repartir les factures JIRAMA de mon appartement entre mes colocataires",
-    tech: ["Kotlin", "Gradle", "XML"],
-    image: "imgCardMiZARA.png"
-  }
-];
+const projectsData = {
+  FR: [
+    {
+      title: "Plateforme du ministère",
+      description: "Plateforme pour gérer les demandes de congés et permissions de tout les personnels du Ministere de la jeunesse et des sports",
+      tech: ["ReactJS", "Laravel", "MySQL"],
+      image: "captureRH.png"
+    },
+    {
+      title: "Site FPTSD",
+      description: "Conception d'un site vitrine pour l'Université FPTSD Madagascar, accompagné d'un back-office dédié à la gestion des contenus.",
+      tech: ["Figma","ReactJS", "NestJS", "PostgreSQL"],
+      image: "captureFPTSD.png"
+    },
+    {
+      title: "iKandra",
+      description: "Une plateforme pour pour freelancers et clients à Madagascar",
+      tech: ["ReactJS", "Spring boot", "PostgreSQL"],
+      image: "captureIkandra.png"
+    },
+    {
+      title: "Site d'inscription universitaire",
+      description: "Un site web pour faire l'inscription en ligne pour les étudiants pour la Faculté de Sciences Fianarantsoa",
+      tech: ["ReactJS", "ASP.NET Core", "Mongo DB"],
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&h=500&fit=crop"
+    },
+    {
+      title: "Mi-ZARA",
+      description: "une application mobile pour repartir les factures JIRAMA de mon appartement entre mes colocataires",
+      tech: ["Kotlin", "Gradle", "XML"],
+      image: "imgCardMiZARA.png"
+    }
+  ],
+  EN: [
+    {
+      title: "Ministry Platform",
+      description: "Platform to manage leave and permission requests for all staff of the Ministry of Youth and Sports",
+      tech: ["ReactJS", "Laravel", "MySQL"],
+      image: "captureRH.png"
+    },
+    {
+      title: "FPTSD Website",
+      description: "Design of a showcase website for FPTSD University Madagascar, with a dedicated back-office for content management.",
+      tech: ["Figma","ReactJS", "NestJS", "PostgreSQL"],
+      image: "captureFPTSD.png"
+    },
+    {
+      title: "iKandra",
+      description: "A platform connecting freelancers and clients in Madagascar",
+      tech: ["ReactJS", "Spring boot", "PostgreSQL"],
+      image: "captureIkandra.png"
+    },
+    {
+      title: "University Registration Website",
+      description: "A web application for online student enrollment at the Faculty of Sciences Fianarantsoa",
+      tech: ["ReactJS", "ASP.NET Core", "Mongo DB"],
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&h=500&fit=crop"
+    },
+    {
+      title: "Mi-ZARA",
+      description: "A mobile app to split JIRAMA utility bills among roommates in my apartment",
+      tech: ["Kotlin", "Gradle", "XML"],
+      image: "imgCardMiZARA.png"
+    }
+  ]
+};
 
-export default function Projects({ theme }: ProjectsProps) {
+const translations = {
+  FR: {
+    titleLeft: 'Mes ',
+    titleRight: 'Projets',
+    prevLabel: 'Projet précédent',
+    nextLabel: 'Projet suivant',
+    dotLabel: (i: number) => `Aller au projet ${i + 1}`,
+  },
+  EN: {
+    titleLeft: 'My ',
+    titleRight: 'Projects',
+    prevLabel: 'Previous project',
+    nextLabel: 'Next project',
+    dotLabel: (i: number) => `Go to project ${i + 1}`,
+  },
+};
+
+export default function Projects({ theme, lang }: ProjectsProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [previousIndex, setPreviousIndex] = useState<number | null>(null);
-  const title = "Mes Projets";
-  const leftPart = title.slice(0, 4).split('');
-  const rightPart = title.slice(4, ).split('');
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
-  const prevIndex = (currentIndex - 1 + projectsData.length) % projectsData.length;
-  const nextIndex = (currentIndex + 1) % projectsData.length;
+
+  const t = translations[lang];
+  const projects = projectsData[lang];
+
+  const leftPart = t.titleLeft.split('');
+  const rightPart = t.titleRight.split('');
+
+  const prevIndex = (currentIndex - 1 + projects.length) % projects.length;
+  const nextIndex = (currentIndex + 1) % projects.length;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -100,7 +156,7 @@ export default function Projects({ theme }: ProjectsProps) {
   const nextSlide = () => {
     setPreviousIndex(currentIndex);
     setDirection('right');
-    setCurrentIndex((prev) => (prev + 1) % projectsData.length);
+    setCurrentIndex((prev) => (prev + 1) % projects.length);
     
     setTimeout(() => {
       setPreviousIndex(null);
@@ -110,12 +166,13 @@ export default function Projects({ theme }: ProjectsProps) {
   const prevSlide = () => {
     setPreviousIndex(currentIndex);
     setDirection('left');
-    setCurrentIndex((prev) => (prev - 1 + projectsData.length) % projectsData.length);
+    setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
     
     setTimeout(() => {
       setPreviousIndex(null);
     }, 300);
   };
+
   return (
     <section
       ref={sectionRef}
@@ -185,7 +242,7 @@ export default function Projects({ theme }: ProjectsProps) {
               transform: hasAnimated ? 'scale(0.9)' : 'translateX(-100px) scale(0.8)'
             }}
           >
-            <ProjectCard {...projectsData[prevIndex]} theme={theme} />
+            <ProjectCard {...projects[prevIndex]} theme={theme} />
           </div>
 
           {/* Card principale (current) */}
@@ -200,7 +257,7 @@ export default function Projects({ theme }: ProjectsProps) {
                             direction === 'right' ? 'slideOutToLeft 0.4s ease-out forwards' : 'none'
                 }}
               >
-                <ProjectCard {...projectsData[previousIndex]} theme={theme} />
+                <ProjectCard {...projects[previousIndex]} theme={theme} />
               </div>
             )}
             
@@ -219,7 +276,7 @@ export default function Projects({ theme }: ProjectsProps) {
                 transform: !hasAnimated && !previousIndex ? 'scale(0.8)' : undefined
               }}
             >
-              <ProjectCard {...projectsData[currentIndex]} theme={theme} />
+              <ProjectCard {...projects[currentIndex]} theme={theme} />
             </div>
           </div>
 
@@ -240,7 +297,7 @@ export default function Projects({ theme }: ProjectsProps) {
               transform: hasAnimated ? 'scale(0.9)' : 'translateX(100px) scale(0.8)'
             }}
           >
-            <ProjectCard {...projectsData[nextIndex]} theme={theme} />
+            <ProjectCard {...projects[nextIndex]} theme={theme} />
           </div>
           
           {/* Boutons de navigation */}
@@ -251,7 +308,7 @@ export default function Projects({ theme }: ProjectsProps) {
                 ? 'bg-white/10 hover:bg-white/20 text-white'
                 : 'bg-gray-200 hover:bg-gray-300 text-gray-800 shadow-md'
             }`}
-            aria-label="Projet précédent"
+            aria-label={t.prevLabel}
             style={{
               animation: !hasAnimated && isVisible ? 'fadeInScale 0.5s ease-out forwards 0.4s' : 'none',
               opacity: hasAnimated ? 1 : 0,
@@ -268,7 +325,7 @@ export default function Projects({ theme }: ProjectsProps) {
                 ? 'bg-white/10 hover:bg-white/20 text-white'
                 : 'bg-gray-200 hover:bg-gray-300 text-gray-800 shadow-md'
             }`}
-            aria-label="Projet suivant"
+            aria-label={t.nextLabel}
             style={{
               animation: !hasAnimated && isVisible ? 'fadeInScale 0.5s ease-out forwards 0.4s' : 'none',
               opacity: hasAnimated ? 1 : 0,
@@ -281,7 +338,7 @@ export default function Projects({ theme }: ProjectsProps) {
 
         {/* Indicateurs */}
         <div className="flex gap-1.5 md:gap-2 mt-6 md:mt-8">
-          {projectsData.map((_, index) => (
+          {projects.map((_, index) => (
             <button
               key={index}
               onClick={() => {
@@ -295,7 +352,7 @@ export default function Projects({ theme }: ProjectsProps) {
                   ? 'bg-white/30 hover:bg-white/50 w-2.5 md:w-3'
                   : 'bg-gray-300 hover:bg-gray-400 w-2.5 md:w-3'
               }`}
-              aria-label={`Aller au projet ${index + 1}`}
+              aria-label={t.dotLabel(index)}
             />
           ))}
         </div>

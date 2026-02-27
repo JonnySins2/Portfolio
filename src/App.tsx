@@ -11,6 +11,7 @@ function App() {
   const [scrollY, setScrollY] = useState(0);
   const [activeSection, setActiveSection] = useState('accueil');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [lang, setLang] = useState<'FR' | 'EN'>('FR');
 
   // Optimisation du scroll avec throttle
   useEffect(() => {
@@ -59,15 +60,17 @@ function App() {
         onNavigate={scrollToSection}
         theme={theme}
         onThemeToggle={toggleTheme}
+        lang={lang}
+        onLangChange={setLang}
       />
-      <Hero scrollY={scrollY} onNavigate={scrollToSection} theme={theme} />
+      <Hero scrollY={scrollY} onNavigate={scrollToSection} theme={theme} lang={lang} />
       
-      <Projects theme={theme} scrollY={scrollY} />
+      <Projects theme={theme} scrollY={scrollY} lang={lang} />
       
-      <Skills theme={theme} scrollY={scrollY} />
-      <About theme={theme} />
-      <Contact theme={theme} />
-      <Footer theme={theme} />
+      <Skills theme={theme} scrollY={scrollY} lang={lang} />
+      <About theme={theme} lang={lang} />
+      <Contact theme={theme} lang={lang} />
+      <Footer theme={theme} lang={lang} />
     </div>
   );
 }

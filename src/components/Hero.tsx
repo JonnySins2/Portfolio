@@ -5,9 +5,25 @@ interface HeroProps {
   scrollY: number;
   onNavigate: (section: string) => void;
   theme: 'dark' | 'light';
+  lang: 'FR' | 'EN';
 }
 
-export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
+const translations = {
+  FR: {
+    badge: 'Développeur Fullstack',
+    description: "Passionné par la création d'expériences web modernes et performantes. Je transforme vos idées en solutions digitales élégantes.",
+    contact: 'Me contacter',
+    projects: 'Voir mes projets',
+  },
+  EN: {
+    badge: 'Fullstack Developer',
+    description: 'Passionate about crafting modern, high-performance web experiences. I turn your ideas into elegant digital solutions.',
+    contact: 'Contact me',
+    projects: 'View my projects',
+  },
+};
+
+export default function Hero({ scrollY, onNavigate, theme, lang }: HeroProps) {
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1024
   );
@@ -17,6 +33,8 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
   const rafRef = useRef<number | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
+
+  const t = translations[lang];
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -134,7 +152,7 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
                   willChange: 'backdrop-filter',
                 }}
               >
-                Développeur Fullstack
+                {t.badge}
               </div>
             </div>
           </div>
@@ -168,8 +186,7 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
                 transform: scrollY < 100 ? 'translateX(-900px)' : undefined,
               }}
             >
-              Passionné par la création d'expériences web modernes et performantes.
-              Je transforme vos idées en solutions digitales élégantes.
+              {t.description}
             </p>
 
             <div 
@@ -189,7 +206,7 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
                     : 'bg-amber-500 text-white hover:bg-amber-600 shadow-md hover:shadow-lg'
                 }`}
               >
-                Me contacter
+                {t.contact}
               </button>
 
               <button
@@ -200,7 +217,7 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
                     : 'bg-gray-100 hover:bg-gray-200 border-2 border-gray-300 text-gray-800 shadow-sm'
                 }`}
               >
-                Voir mes projets
+                {t.projects}
               </button>
             </div>
 
