@@ -1,4 +1,4 @@
-import { Github, Linkedin, Mail, ChevronDown } from 'lucide-react';
+import { Github, Linkedin, Mail } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
 interface HeroProps {
@@ -15,6 +15,8 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
   const bgRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -22,7 +24,6 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Parallax fluide sans re-render React
   useEffect(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
@@ -33,11 +34,29 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
       if (contentRef.current) {
         contentRef.current.style.transform = `translate3d(0, ${scrollY * 0.2}px, 0)`;
       }
+      if (overlayRef.current && scrollY >= 100) {
+        const size = 100 + (scrollY - 100) * 0.8;
+        overlayRef.current.style.backgroundSize = `${size}% 100%`;
+      }
     });
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
+  }, [scrollY]);
+
+  useEffect(() => {
+    if (scrollY < 100) {
+      setIsLoaded(false);
+      
+      const timer = setTimeout(() => {
+        setIsLoaded(true);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    } else {
+      setIsLoaded(false);
+    }
   }, [scrollY]);
 
   const getBackgroundPosition = () => {
@@ -52,10 +71,14 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
     <section
       id="accueil"
       className="min-h-screen flex items-center justify-center relative overflow-hidden"
+      style={{
+        background: theme === 'dark' ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)'
+      }}
     >
+      {/* Background image - caché sur petits écrans */}
       <div
         ref={bgRef}
-        className="absolute inset-0 will-change-transform"
+        className="absolute inset-0 will-change-transform hidden md:block"
         style={{
           backgroundImage: 'url(/imgHero.jpg)',
           backgroundSize: '130%',
@@ -64,116 +87,267 @@ export default function Hero({ scrollY, onNavigate, theme }: HeroProps) {
           minWidth: '430px',
         }}
       />
+
+      {/* Overlay gradient */}
       <div
-        className="absolute inset-0"
+        ref={overlayRef}
+        className="absolute inset-0 will-change-transform"
         style={{
-          background:
-            theme === 'dark'
-              ? 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 70%, transparent 100%)'
-              : 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0) 70%, transparent 100%)',
+          background: theme === 'dark'
+            ? 'linear-gradient(to right, rgba(0,0,0,1) 10%, rgba(0,0,0,0.95) 40%, rgba(0,0,0,0.1) 70%, transparent 100%)'
+            : 'linear-gradient(to right, rgba(255,255,255,1) 10%, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.1) 70%, rgba(255,255,255,0) 100%)',
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'left center',
         }}
       />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6">
-        <div
-          ref={contentRef}
-          className="text-left space-y-8 max-w-2xl will-change-transform"
-        >
-          <div className="space-y-4">
-            <div
-              className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
-                theme === 'dark'
-                  ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                  : 'bg-blue-100 text-blue-700 border border-blue-200'
-              }`}
+      <div style={{ maxWidth: '1600px' }} className="relative z-10 w-full mx-auto px-6">
+        <div ref={contentRef} className="will-change-transform">
+          {/* Badge avec animation de bordure */}
+          <div className="flex justify-center mb-12 md:mb-20">
+            <div 
+              className="relative p-[2px] rounded-full overflow-hidden"
+              style={{
+                animation: scrollY < 100 ? 'dropBounce 1.5s' : 'slideToTop 1s forwards',
+              }}
             >
-               Disponible pour de nouveaux projets
+              {/* Gradient qui tourne */}
+              <div
+                className={`absolute inset-0 rounded-full ${isLoaded ? 'animate-spin' : ''}`}
+                style={{
+                  background: isLoaded ? (
+                    theme === 'dark'
+                      ? 'conic-gradient(from 90deg, transparent 0%, transparent 95%, #f59e0b 80%, #fbbf24 100%, #f59e0b 100%, transparent 100%)'
+                      : 'conic-gradient(from 90deg, transparent 0%, transparent 80%, #f59e0b 85%, #fbbf24 90%, #f59e0b 95%, transparent 100%)'
+                  ) : 'transparent',
+                  animationDuration: isLoaded ? '3s' : '0s',
+                  transition: 'background 0.5s ease-in-out',
+                }}
+              />
+              {/* Fond du badge */}
+              <div className={`relative rounded-full px-4 py-2 text-sm md:text-lg backdrop-blur-lg ${
+                theme === 'dark'
+                  ? 'bg-white/5 hover:bg-white/10 border border-gray-700 text-white'
+                  : 'bg-white/5 hover:bg-gray-100 border-2 border-gray-300 text-gray-800'
+              }`}
+                style={{
+                  willChange: 'backdrop-filter',
+                }}
+              >
+                Développeur Fullstack
+              </div>
             </div>
+          </div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
-              Développeur
-              <span className="block bg-purple-600 to-pink-600 bg-clip-text text-transparent mt-2">
-                Full Stack
+          {/* Reste du contenu aligné à gauche avec animation slide */}
+          <div className="text-left space-y-6 md:space-y-8 max-w-2xl">
+            <h1 
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight transition-all duration-300"
+              style={{
+                animation: scrollY < 100 ? 'slideFromLeft 0.8s ease-out forwards' : 'slideToLeft 1s ease-out forwards',
+                animationDelay: scrollY < 100 ? '0.2s' : '0s',
+                opacity: scrollY >= 100 ? 0 : undefined,
+                transform: scrollY < 100 ? 'translateX(-900px)' : undefined,
+                color: theme === 'dark' ? 'white' : '#111827'
+              }}
+            >
+              Julianot
+              <span className="block bg-amber-500 bg-clip-text text-transparent mt-2">
+                Ralahijaonina
               </span>
             </h1>
-          </div>
 
-          <p
-            className={`text-lg md:text-xl max-w-xl ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}
-          >
-            Passionné par la création d'expériences web modernes et performantes.
-            Je transforme vos idées en solutions digitales élégantes.
-          </p>
-
-          <div className="flex flex-wrap gap-4">
-            <button
-              onClick={() => onNavigate('contact')}
-              className="px-8 py-4 bg-purple-600 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all hover:scale-105"
-            >
-              Me contacter
-            </button>
-
-            <button
-              onClick={() => onNavigate('projets')}
-              className={`px-8 py-4 rounded-full font-semibold transition-all hover:scale-105 ${
-                theme === 'dark'
-                  ? 'bg-white/5 hover:bg-white/10 border border-gray-700'
-                  : 'bg-gray-100 hover:bg-gray-200 border border-gray-300'
+            <p
+              className={`text-base md:text-lg lg:text-xl max-w-xl transition-all duration-300 ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-700'
               }`}
+              style={{
+                animation: scrollY < 100 ? 'slideFromLeft 0.8s ease-out forwards' : 'slideToLeft 1s ease-out forwards',
+                animationDelay: scrollY < 100 ? '0.2s' : '0s',
+                opacity: scrollY >= 100 ? 0 : undefined,
+                transform: scrollY < 100 ? 'translateX(-900px)' : undefined,
+              }}
             >
-              Voir mes projets
-            </button>
-          </div>
+              Passionné par la création d'expériences web modernes et performantes.
+              Je transforme vos idées en solutions digitales élégantes.
+            </p>
 
-          <div className="flex gap-6 pt-4">
-            <a
-              href="https://github.com/JonnySins2"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`p-3 rounded-full transition-all hover:scale-110 ${
-                theme === 'dark'
-                  ? 'bg-white/5 hover:bg-white/10 border border-gray-800'
-                  : 'bg-gray-100 hover:bg-gray-200 border border-gray-200'
-              }`}
+            <div 
+              className="flex flex-wrap gap-3 md:gap-4 transition-all duration-300"
+              style={{
+                opacity: scrollY >= 100 ? 0 : undefined,
+                animation: scrollY < 100 ? 'slideFromLeft 0.85s ease-out forwards' : 'slideToLeft 1s ease-out forwards',
+                animationDelay: scrollY < 100 ? '0.2s' : '0s',
+                transform: scrollY < 100 ? 'translateX(-900px)' : undefined,
+              }}
             >
-              <Github className="w-6 h-6" />
-            </a>
+              <button
+                onClick={() => onNavigate('contact')}
+                className={`px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold transition-all hover:scale-105 text-sm md:text-base ${
+                  theme === 'dark'
+                    ? 'bg-white/5 text-amber-400 hover:bg-amber-500/10'
+                    : 'bg-amber-500 text-white hover:bg-amber-600 shadow-md hover:shadow-lg'
+                }`}
+              >
+                Me contacter
+              </button>
 
-            <a
-              href="https://www.linkedin.com/in/julianot-ralahijaonina-ba9262320/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`p-3 rounded-full transition-all hover:scale-110 ${
-                theme === 'dark'
-                  ? 'bg-white/5 hover:bg-white/10 border border-gray-800'
-                  : 'bg-gray-100 hover:bg-gray-200 border border-gray-200'
-              }`}
-            >
-              <Linkedin className="w-6 h-6" />
-            </a>
+              <button
+                onClick={() => onNavigate('projets')}
+                className={`px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold transition-all hover:scale-105 text-sm md:text-base ${
+                  theme === 'dark'
+                    ? 'bg-white/5 hover:bg-white/10 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 border-2 border-gray-300 text-gray-800 shadow-sm'
+                }`}
+              >
+                Voir mes projets
+              </button>
+            </div>
 
-            <a
-              href="mailto:votre@email.com"
-              className={`p-3 rounded-full transition-all hover:scale-110 ${
-                theme === 'dark'
-                  ? 'bg-white/5 hover:bg-white/10 border border-gray-800'
-                  : 'bg-gray-100 hover:bg-gray-200 border border-gray-200'
-              }`}
-            >
-              <Mail className="w-6 h-6" />
-            </a>
+            <div className="flex gap-4 md:gap-6 pt-4">
+              <a
+                href="https://github.com/JonnySins2"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`p-2 md:p-3 rounded-full transition-all hover:scale-110 ${
+                  theme === 'dark'
+                    ? 'bg-white/5 hover:bg-white/10 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 border-2 border-gray-300 text-gray-800 shadow-sm'
+                }`}
+                style={{
+                  animation: scrollY >= 100 ? 'scaleDown 1.2s ease-out forwards' : 'scaleUp 0.8s ease-out forwards',
+                  animationDelay: '0.8s',
+                  transform: 'scale(0)' 
+                }}
+              >
+                <Github className="w-5 h-5 md:w-6 md:h-6" />
+              </a>
+
+              <a
+                href="https://www.linkedin.com/in/julianot-ralahijaonina-ba9262320/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`p-2 md:p-3 rounded-full transition-all hover:scale-110 ${
+                  theme === 'dark'
+                    ? 'bg-white/5 hover:bg-white/10 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 border-2 border-gray-300 text-gray-800 shadow-sm'
+                }`}
+                style={{
+                  animation: scrollY >= 100 ? 'scaleDown 1.4s ease-out forwards' : 'scaleUp 0.9s ease-out forwards',
+                  animationDelay: '0.85s',
+                  transform: 'scale(0)'
+                }}
+              >
+                <Linkedin className="w-5 h-5 md:w-6 md:h-6" />
+              </a>
+
+              <a
+                href="mailto:votre@email.com"
+                className={`p-2 md:p-3 rounded-full transition-all hover:scale-110 ${
+                  theme === 'dark'
+                    ? 'bg-white/5 hover:bg-white/10 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 border-2 border-gray-300 text-gray-800 shadow-sm'
+                }`}
+                style={{
+                  animation: scrollY >= 100 ? 'scaleDown 1.6s ease-out forwards' : 'scaleUp 1s ease-out forwards',
+                  animationDelay: '.9s',
+                  transform: 'scale(0)'
+                }}
+              >
+                <Mail className="w-5 h-5 md:w-6 md:h-6" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
-      <button
-        onClick={() => onNavigate('projets')}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce"
-      >
-        <ChevronDown className="w-10 h-10" />
-      </button>
+      {/* Animations CSS */}
+      <style>{`
+        @keyframes dropBounce {
+          0% {
+            transform: translateY(-200px);
+            opacity: 0;
+          }
+          50% {
+            opacity: 1;
+          }
+          70% {
+            transform: translateY(10px);
+          }
+          85% {
+            transform: translateY(-5px);
+          }
+          100% {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideToTop {
+          0% {
+            transform: translateY(0);
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(-200px);
+            opacity: 0;
+          }
+        }
+
+        @keyframes slideFromLeft {
+          0% {
+            transform: translateX(-200px);
+            opacity: 0;
+          }
+          100% {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        @keyframes scaleUp {
+          0% {
+            transform: scale(0);
+          }
+          60% {
+            transform: scale(1.15);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+
+        @keyframes scaleDown {
+          0% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(0);
+          }
+        }
+
+        @keyframes slideToLeft {
+          0% {
+            transform: translateX(0px);
+            opacity: 1;
+         }
+          100% {
+            transform: translateX(-200px);
+            opacity: 0;
+          }
+        }
+
+        @keyframes slideToRight {
+          0% {
+            transform: translateX(0px);
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(200px);
+            opacity: 0;
+          }
+        }
+
+      `}</style>
     </section>
   );
 }

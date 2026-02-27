@@ -10,7 +10,7 @@ export default function Footer({ theme }: FooterProps) {
         ? 'border-gray-800 text-gray-400' 
         : 'border-gray-200 text-gray-600'
     }`}>
-      <p>© {year} Portfolio. Tous droits réservés.</p>
+      <p>© {year} Portfolio. Merci d'avoir visité mon portfolio.</p>
     </footer>
   );
 }

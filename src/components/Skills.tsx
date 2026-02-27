@@ -1,5 +1,5 @@
 import SkillCard from "./SkillCard";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 interface SkillsProps {
   scrollY: number;
@@ -48,82 +48,177 @@ const skillsData = [
   }
 ];
 
-export default function Skills({ theme, scrollY }: SkillsProps) {
-  const bgRef = useRef<HTMLDivElement>(null);
+export default function Skills({ theme }: SkillsProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const rafRef = useRef<number | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [animationPlayed, setAnimationPlayed] = useState(false);
 
   useEffect(() => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-
-    rafRef.current = requestAnimationFrame(() => {
-      if (bgRef.current && sectionRef.current) {
-        const section = sectionRef.current;
-        const rect = section.getBoundingClientRect();
+    const handleScroll = () => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
         
-        // Calculer le parallax seulement quand la section est visible
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          // Position relative : quand la section est au centre de l'écran = 0
-          const sectionCenter = rect.top + rect.height / 2;
-          const viewportCenter = window.innerHeight / 2;
-          const offset = (viewportCenter - sectionCenter) * 0.3;
-          
-          bgRef.current.style.transform = `translate3d(0, ${offset}px, 0)`;
+        if (rect.top < window.innerHeight * 0.7 && rect.bottom > 0) {
+          if (!isVisible) {
+            setIsVisible(true);
+            setTimeout(() => setAnimationPlayed(true), 1100);
+          }
+        } else {
+          if (isVisible) {
+            setIsVisible(false);
+            setAnimationPlayed(false);
+          }
         }
       }
-    });
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [scrollY]);
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isVisible]);
+
+  const title = "Mes Compétences";
+  const leftPart = title.slice(0, 4).split('');
+  const rightPart = title.slice(4).split('');   
 
   return (
     <section 
       ref={sectionRef}
       id="competences" 
-      className="relative py-32 px-6 overflow-hidden transition-colors duration-300"
+      className="relative min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 py-16 sm:py-20 overflow-hidden"
     >
-      {/* Background image avec parallax */}
-      <div
-        ref={bgRef}
-        className="absolute will-change-transform"
-        style={{
-          backgroundImage: 'url(/imgSkills.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat',
-          top: '-15%',
-          left: 0,
-          right: 0,
-          height: '130%',
-        }}
-      />
-
-      {/* Overlay gradient */}
+      {/* Background solid */}
       <div 
         className="absolute inset-0"
         style={{
           background: theme === 'dark'
-            ? 'rgba(0, 0, 0, 0.75)'
-            : 'rgba(255, 255, 255, 0.85)',
+            ? 'rgb(0, 0, 0)'
+            : 'rgb(255, 255, 255)',
         }}
       />
 
       {/* Contenu */}
-      <div className="relative z-10 max-w-7xl mx-auto">
-        <h2 className="text-5xl font-bold mb-4 text-center">Mes Compétences</h2>
-        <p className={`text-center mb-16 text-lg ${
-          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-        }`}>
-          Technologies et outils que je maîtrise
-        </p>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {skillsData.map((category, index) => (
-            <SkillCard key={index} {...category} theme={theme} />
-          ))}
+      <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
+        {/* Titre animé */}
+        <h2 className="text-3xl sm:text-4xl md:text-5xl text-amber-500 font-bold mb-8 sm:mb-12 md:mb-16 text-center flex justify-center">
+          <span className="inline-flex">
+            {leftPart.map((letter, index) => (
+              <span
+                key={`left-${index}`}
+                className="inline-block"
+                style={{
+                  animation: isVisible ? `slideFromLeftLetter 0.5s ease-out forwards ${index * 0.05}s` : 'none',
+                  opacity: 0,
+                }}
+              >
+                {letter === ' ' ? '\u00A0' : letter}
+              </span>
+            ))}
+          </span>
+          
+          <span className="inline-flex">
+            {rightPart.map((letter, index) => (
+              <span
+                key={`right-${index}`}
+                className="inline-block"
+                style={{
+                  animation: isVisible ? `slideFromRightLetter 0.5s ease-out forwards ${index * 0.05}s` : 'none',
+                  opacity: 0,
+                }}
+              >
+                {letter === ' ' ? '\u00A0' : letter}
+              </span>
+            ))}
+          </span>
+        </h2>
+
+        {/* Grille des compétences */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 w-full max-w-6xl">
+          {skillsData.map((category, index) => {
+            const isLeftSide = index < 2; 
+            const animationName = animationPlayed 
+              ? 'floating' 
+              : isLeftSide
+                ? 'slideInFromLeftCard' 
+                : 'slideInFromRightCard';
+            
+            return (
+              <div
+                key={index}
+                className="w-full"
+                style={{
+                  animation: isVisible 
+                    ? animationPlayed
+                      ? `${animationName} 3s ease-in-out infinite`
+                      : `${animationName} 0.6s ease-out forwards ${0.2 + (isLeftSide ? index : index - 2) * 0.15}s`
+                    : 'none',
+                  opacity: isVisible && !animationPlayed ? 0 : 1,
+                  animationDelay: animationPlayed ? `${index * 0.6}s` : undefined,
+                }}
+              >
+                <SkillCard {...category} theme={theme} />
+              </div>
+            );
+          })}
         </div>
       </div>
+
+      {/* Animations CSS */}
+      <style>{`
+        @keyframes slideFromLeftLetter {
+          0% {
+            transform: translateX(-200px);
+            opacity: 0;
+          }
+          100% {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideFromRightLetter {
+          0% {
+            transform: translateX(200px);
+            opacity: 0;
+          }
+          100% {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideInFromLeftCard {
+          0% {
+            transform: translateX(-100px);
+            opacity: 0;
+          }
+          100% {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideInFromRightCard {
+          0% {
+            transform: translateX(100px);
+            opacity: 0;
+          }
+          100% {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes floating {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+      `}</style>
     </section>
   );
 }

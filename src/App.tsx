@@ -51,7 +51,7 @@ function App() {
   }, []);
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
+    <div style={{ fontFamily: "'Space Grotesk', sans-serif" }} className={`min-h-screen transition-colors duration-300 ${
       theme === 'dark' ? 'bg-gray-950 text-white' : 'bg-white text-gray-900'
     }`}>
       <Navigation 

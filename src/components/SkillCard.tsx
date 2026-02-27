@@ -12,9 +12,9 @@ interface SkillCardProps {
 
 export default function SkillCard({ name, skills, theme }: SkillCardProps) {
   return (
-    <div className={`rounded-2xl p-6 border transition-all duration-300 hover:scale-105 ${
+    <div className={`rounded-2xl p-6 border transition-all duration-300 hover:scale-105 h-full ${
       theme === 'dark' 
-        ? 'bg-gray-900 border-gray-800 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/20' 
+        ? 'bg-gray-900/30 border-gray-800' 
         : 'bg-white border-gray-200 hover:border-blue-400 shadow-lg hover:shadow-2xl'
     }`}>
       <h3 className="text-xl font-bold mb-6 text-center">{name}</h3>
